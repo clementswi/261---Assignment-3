@@ -8,6 +8,9 @@
 from SLNode import *
 
 
+from SLNode import *
+
+
 class SLNode:
     """Singly Linked List Node class
     DO NOT CHANGE THIS CLASS IN ANY WAY"""
@@ -42,19 +45,6 @@ class LinkedList:
                 node = node.next
         return out + ']'
 
-    def length(self) -> int:
-        """
-        Return the length of the linked list
-        DO NOT CHANGE THIS METHOD IN ANY WAY
-        """
-
-        length = 0
-        node = self._head.next
-        while node:
-            length += 1
-            node = node.next
-        return length
-
     def is_empty(self) -> bool:
         """Return True if the linked list is empty, False otherwise
         DO NOT CHANGE THIS METHOD IN ANY WAY
@@ -62,80 +52,72 @@ class LinkedList:
         return self._head.next is None
 
     def insert_front(self, value: object) -> None:
-        """Insert a new node with the given value at the beginning of the list (after the front sentinel).
-        O(1) runtime complexity.
+        """Insert a new node with the given value at the front of the linked list.
         """
         new_node = SLNode(value)
         new_node.next = self._head.next
         self._head.next = new_node
 
     def insert_back(self, value: object) -> None:
-        """Insert a new node with the given value at the end of the list.
-        O(N) runtime complexity.
+        """Insert a new node with the given value at the back of the linked list.
         """
         new_node = SLNode(value)
         node = self._head
-        while node.next:
+        while node.next is not None:
             node = node.next
         node.next = new_node
 
     def insert_at_index(self, index: int, value: object) -> None:
-        """Insert a new value at the specified index position in the linked list.
-        Index 0 refers to the beginning of the list (right after the front sentinel).
-        If the provided index is invalid, raise a custom "SLLException".
-        O(N) runtime complexity.
+        """Insert a new node with the given value at the specified index in the linked list.
+        If the index is out of bounds, raise a SLLException.
         """
-        if index < 0:
-            raise SLLException("Invalid index: Index must be non-negative.")
+        if index < 0 or index > self.count():
+            raise SLLException('Index out of bounds')
+
+        if index == 0:
+            self.insert_front(value)
+            return
+
+        node = self._head
+        for _ in range(index - 1):
+            node = node.next
 
         new_node = SLNode(value)
-        prev_node = self._head
-        node = self._head.next
-        current_index = 0
-
-        while node and current_index < index:
-            prev_node = node
-            node = node.next
-            current_index += 1
-
-        if current_index == index:
-            prev_node.next = new_node
-            new_node.next = node
-        else:
-            raise SLLException("Invalid index: Index out of range.")
+        new_node.next = node.next
+        node.next = new_node
 
     def remove_at_index(self, index: int) -> None:
-        """Remove the node at the specified index position from the linked list.
-        Index 0 refers to the beginning of the list (right after the front sentinel).
-        If the provided index is invalid, raise a custom "SLLException".
-        O(N) runtime complexity.
+        """Remove the node at the specified index from the linked list.
+        If the index is out of bounds, raise a SLLException.
         """
-        if index < 0 or self.is_empty() is True:
-            raise SLLException
+        if index < 0 or index >= self.count():
+            raise SLLException('Index out of bounds')
 
-        curr = self._head
-        for num in range(index):
-            if curr.next.next is None:
-                raise SLLException
-            curr = curr.next
-        curr.next = curr.next.next
+        if index == 0:
+            self._head.next = self._head.next.next
+            return
 
-    def remove(self, value: object) -> bool:
-        """Remove the first occurrence of the node with the given value from the linked list.
-        Return True if a node was removed from the list, otherwise return False.
-        O(N) runtime complexity.
-        """
-        prev_node = self._head
-        node = self._head.next
-
-        while node:
-            if node.value == value:
-                prev_node.next = node.next
-                return True
-            prev_node = node
+        node = self._head
+        for _ in range(index - 1):
             node = node.next
 
-        return False
+        node.next = node.next.next
+
+    def remove(self, value: object) -> None:
+        """Remove the first node with the given value from the linked list.
+        If the value is not found, raise a SLLException.
+        """
+        current_node = self._head
+        previous_node = self._head
+        while current_node is not None:
+            if current_node.value == value:
+                if current_node == self._head:
+                    self._head.next = current_node.next
+                else:
+                    previous_node.next = current_node.next
+                    return
+            previous_node = current_node
+            current_node = current_node.next
 
     def count(self, value: object) -> int:
         """Count the number of elements in the list that match the provided value.
