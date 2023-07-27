@@ -194,4 +194,3 @@ class LinkedList:
             raise SLLException("Not enough nodes to make a slice of the requested size.")
 
         return new_list
-
