@@ -110,25 +110,15 @@ class LinkedList:
         If the provided index is invalid, raise a custom "SLLException".
         O(N) runtime complexity.
         """
-        if index < 0:
-            raise SLLException("Invalid index: Index must be non-negative.")
+        if index < 0 or self.is_empty() is True:
+            raise SLLException
 
-        prev_node = self._head
-        node = self._head.next
-        current_index = 0
-
-        while node and current_index < index:
-            prev_node = node
-            node = node.next
-            current_index += 1
-
-        if current_index == index:
-            if node:
-                prev_node.next = node.next
-            else:
-                raise SLLException("Invalid index: Index out of range.")
-        else:
-            raise SLLException("Invalid index: Index out of range.")
+        curr = self._head
+        for num in range(index):
+            if curr.next.next is None:
+                raise SLLException
+            curr = curr.next
+        curr.next = curr.next.next
 
     def remove(self, value: object) -> bool:
         """Remove the first occurrence of the node with the given value from the linked list.
