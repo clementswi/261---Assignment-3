@@ -42,6 +42,19 @@ class LinkedList:
                 node = node.next
         return out + ']'
 
+    def length(self) -> int:
+        """
+        Return the length of the linked list
+        DO NOT CHANGE THIS METHOD IN ANY WAY
+        """
+
+        length = 0
+        node = self._head.next
+        while node:
+            length += 1
+            node = node.next
+        return length
+
     def is_empty(self) -> bool:
         """Return True if the linked list is empty, False otherwise
         DO NOT CHANGE THIS METHOD IN ANY WAY
