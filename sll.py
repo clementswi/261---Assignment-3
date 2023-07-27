@@ -42,14 +42,6 @@ class LinkedList:
                 node = node.next
         return out + ']'
 
-    @classmethod
-    def from_list(cls, values: List[object]) -> 'LinkedList':
-        """Create a new LinkedList from a list of values."""
-        linked_list = cls()
-        for value in values:
-            linked_list.insert_back(value)
-        return linked_list
-
     def length(self) -> int:
         """
         Return the length of the linked list
@@ -215,3 +207,11 @@ class LinkedList:
             raise SLLException("Not enough nodes to make a slice of the requested size.")
 
         return new_list
+
+    @classmethod
+    def from_list(cls, values: List[object]) -> 'LinkedList':
+        """Create a new LinkedList from a list of values."""
+        linked_list = cls()
+        for value in values:
+            linked_list.insert_back(value)
+        return linked_list
