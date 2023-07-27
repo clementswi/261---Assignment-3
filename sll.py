@@ -5,140 +5,137 @@
 # Due Date: 7/24/2023 (Note: 2 free days used on this assignment)
 # Description: Queue class
 
-from SLNode import SLNode
+from SLNode import *
 
-class QueueException(Exception):
-    """Custom exception to be used by Queue class
-DO NOT CHANGE THIS METHOD IN ANY WAY
-"""
+
+class SLNode:
+    """Singly Linked List Node class
+    DO NOT CHANGE THIS CLASS IN ANY WAY"""
+
+    def __init__(self, value: object, next=None) -> None:
+        self.value = value
+        self.next = next
+
+
+class SLLException(Exception):
+    """Custom exception to be used by LinkedList class
+    DO NOT CHANGE THIS CLASS IN ANY WAY"""
     pass
 
 
-class Queue:
+class LinkedList:
     def __init__(self):
-        """Initialize new queue with head and tail nodes
+        """Initialize a new LinkedList with a front sentinel node
         DO NOT CHANGE THIS METHOD IN ANY WAY"""
         self._head = SLNode(None)
-        self._tail = None
 
     def __str__(self):
-        """Return content of queue in human-readable form
+        """Return content of the linked list in human-readable form
         DO NOT CHANGE THIS METHOD IN ANY WAY"""
-        out = 'QUEUE ['
+        out = 'SLL ['
         if not self.is_empty():
             node = self._head.next
-            out = out + str(node.value)
+            out += str(node.value)
             node = node.next
             while node:
-                out = out + ' -> ' + str(node.value)
+                out += ' -> ' + str(node.value)
                 node = node.next
         return out + ']'
 
     def is_empty(self) -> bool:
-        """Return True if the queue is empty, False otherwise
+        """Return True if the linked list is empty, False otherwise
         DO NOT CHANGE THIS METHOD IN ANY WAY
         """
         return self._head.next is None
 
-    def size(self) -> int:
-        """Return number of elements currently in the queue
-        DO NOT CHANGE THIS METHOD IN ANY WAY
-        """
-        node = self._head.next
-        length = 0
-        while node:
-            length += 1
-            node = node.next
-        return length
-
     def insert_front(self, value: object) -> None:
-        """Add a new node with the given value at the beginning of the queue (right after the front sentinel).
+        """Insert a new node with the given value at the beginning of the list (after the front sentinel).
         O(1) runtime complexity.
         """
         new_node = SLNode(value)
-        if self.is_empty():
-            self._tail = new_node
         new_node.next = self._head.next
         self._head.next = new_node
 
     def insert_back(self, value: object) -> None:
-        """Add a new node with the given value at the end of the queue.
+        """Insert a new node with the given value at the end of the list.
         O(N) runtime complexity.
         """
         new_node = SLNode(value)
-        if self.is_empty():
-            self._head.next = new_node
-            self._tail = new_node
-        else:
-            self._tail.next = new_node
-            self._tail = new_node
+        node = self._head
+        while node.next:
+            node = node.next
+        node.next = new_node
 
     def insert_at_index(self, index: int, value: object) -> None:
         """Insert a new value at the specified index position in the linked list.
         Index 0 refers to the beginning of the list (right after the front sentinel).
-        If the provided index is invalid, raise a custom “QueueException”.
-        Valid indices are [0, N] inclusive.
+        If the provided index is invalid, raise a custom "SLLException".
         O(N) runtime complexity.
         """
-        if index < 0 or index > self.size():
-            raise QueueException("Invalid index.")
+        if index < 0:
+            raise SLLException("Invalid index: Index must be non-negative.")
 
-        if index == 0:
-            self.insert_front(value)
-        elif index == self.size():
-            self.insert_back(value)
-        else:
-            new_node = SLNode(value)
-            prev_node = self._head
-            for i in range(index):
-                prev_node = prev_node.next
-            new_node.next = prev_node.next
+        new_node = SLNode(value)
+        prev_node = self._head
+        node = self._head.next
+        current_index = 0
+
+        while node and current_index < index:
+            prev_node = node
+            node = node.next
+            current_index += 1
+
+        if current_index == index:
             prev_node.next = new_node
+            new_node.next = node
+        else:
+            raise SLLException("Invalid index: Index out of range.")
 
     def remove_at_index(self, index: int) -> None:
         """Remove the node at the specified index position from the linked list.
         Index 0 refers to the beginning of the list (right after the front sentinel).
-        If the provided index is invalid, raise a custom “QueueException”.
-        Valid indices are [0, N-1] inclusive.
+        If the provided index is invalid, raise a custom "SLLException".
         O(N) runtime complexity.
         """
-        if index < 0 or index >= self.size():
-            raise QueueException("Invalid index.")
+        if index < 0:
+            raise SLLException("Invalid index: Index must be non-negative.")
 
-        if index == 0:
-            self._head.next = self._head.next.next
-            if self._head.next is None:
-                self._tail = None
+        prev_node = self._head
+        node = self._head.next
+        current_index = 0
+
+        while node and current_index < index:
+            prev_node = node
+            node = node.next
+            current_index += 1
+
+        if current_index == index:
+            if node:
+                prev_node.next = node.next
+            else:
+                raise SLLException("Invalid index: Index out of range.")
         else:
-            prev_node = self._head
-            for i in range(index):
-                prev_node = prev_node.next
-            prev_node.next = prev_node.next.next
-            if prev_node.next is None:
-                self._tail = prev_node
+            raise SLLException("Invalid index: Index out of range.")
 
     def remove(self, value: object) -> bool:
-        """Remove the first node that matches the provided value.
-        Return True if a node was removed, False otherwise.
+        """Remove the first occurrence of the node with the given value from the linked list.
+        Return True if a node was removed from the list, otherwise return False.
         O(N) runtime complexity.
         """
         prev_node = self._head
-        current_node = self._head.next
+        node = self._head.next
 
-        while current_node:
-            if current_node.value == value:
-                prev_node.next = current_node.next
-                if current_node.next is None:
-                    self._tail = prev_node
+        while node:
+            if node.value == value:
+                prev_node.next = node.next
                 return True
-
-            prev_node = current_node
-            current_node = current_node.next
+            prev_node = node
+            node = node.next
 
         return False
 
     def count(self, value: object) -> int:
-        """Count the number of elements in the queue that match the provided value.
+        """Count the number of elements in the list that match the provided value.
         O(N) runtime complexity.
         """
         count = 0
@@ -152,8 +149,8 @@ class Queue:
         return count
 
     def find(self, value: object) -> bool:
-        """Check if the provided value exists in the queue.
-        Return True if found, False otherwise.
+        """Check if the provided value exists in the list.
+        Return True if the value is found, otherwise return False.
         O(N) runtime complexity.
         """
         node = self._head.next
@@ -165,33 +162,36 @@ class Queue:
 
         return False
 
-    def slice(self, start_index: int, size: int) -> "Queue":
-        """Return a new Queue that contains the requested number of nodes from the
-        original queue, starting with the node located at the requested start index.
-        If the provided start index is invalid or there are not enough nodes to make the slice,
-        raise a custom “QueueException”.
+    def slice(self, start_index: int, size: int) -> 'LinkedList':
+        """Return a new LinkedList containing the requested number of nodes from the original list,
+        starting with the node located at the requested start index.
+        If the provided start index is invalid, or if there are not enough nodes between the start index
+        and the end of the list to make a slice of the requested size, raise a custom "SLLException".
         O(N) runtime complexity.
         """
-        if start_index < 0 or start_index >= self.size() or size <= 0:
-            raise QueueException("Invalid start index or size.")
+        if start_index < 0:
+            raise SLLException("Invalid start index: Index must be non-negative.")
 
-        new_queue = Queue()
-        count = 0
+        new_list = LinkedList()
         node = self._head.next
+        current_index = 0
 
-        # Find the starting node for the slice
-        while count < start_index:
+        # Move to the start index
+        while node and current_index < start_index:
             node = node.next
-            count += 1
+            current_index += 1
 
-        # Slice the queue and create a new queue
-        while count < start_index + size and node:
-            new_queue.insert_back(node.value)
+        if current_index != start_index:
+            raise SLLException("Invalid start index: Index out of range.")
+
+        # Add nodes to the new list up to the requested size
+        while node and size > 0:
+            new_list.insert_back(node.value)
             node = node.next
-            count += 1
+            size -= 1
 
-        if count < start_index + size:
-            raise QueueException("Not enough nodes to make the slice.")
+        if size > 0:
+            raise SLLException("Not enough nodes to make a slice of the requested size.")
 
-        return new_queue
+        return new_list
 
