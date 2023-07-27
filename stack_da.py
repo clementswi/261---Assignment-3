@@ -6,53 +6,49 @@
 # Description: Stack ADT class
 
 
-from dynamic_array import DynamicArray
-
+from DynamicArray import DynamicArray
 
 class StackException(Exception):
-    """Custom exception to be used by Stack class"""
+    """Custom exception to be used by Stack class."""
     pass
 
-
-class Stack:
+class DynamicArrayStack:
     def __init__(self):
-        """Initialize new stack with dynamic array"""
+        """Initialize new stack based on Dynamic Array."""
         self._da = DynamicArray()
 
-    def __str__(self) -> str:
-        """Return content of stack in human-readable form"""
-        out = 'STACK ['
-        if not self.is_empty():
-            node = self._da._head
-            out = out + str(node.value)
-            node = node.next
-            while node:
-                out = out + ' -> ' + str(node.value)
-                node = node.next
+    def __str__(self):
+        """Override string method to provide more readable output."""
+        size = self._da.length()
+        out = "STACK: " + str(size) + " element(s). ["
+        for i in range(size - 1):
+            out += str(self._da[i]) + ', '
+        if size > 0:
+            out += str(self._da[size - 1])
         return out + ']'
 
-    def is_empty(self) -> bool:
-        """Return True if the stack is empty, False otherwise"""
+    def is_empty(self):
+        """Return True if the stack is empty, False otherwise."""
         return self._da.is_empty()
 
-    def size(self) -> int:
-        """Return number of elements currently in the stack"""
+    def size(self):
+        """Return number of elements currently in the stack."""
         return self._da.length()
 
-    def push(self, value: object) -> None:
-        """Add a new value to the top of the stack"""
+    def push(self, value):
+        """Add a new value to the top of the stack."""
         self._da.append(value)
 
-    def pop(self) -> object:
-        """Remove and return the value from the top of the stack"""
+    def pop(self):
+        """Remove and return the value from the top of the stack.
+        If the stack is empty, raise a custom 'StackException'."""
         if self.is_empty():
             raise StackException("Stack is empty")
-        value = self._da[self._da.length() - 1]
-        self._da.remove_at_index(self._da.length() - 1)
-        return value
+        return self._da.pop()
 
-    def top(self) -> object:
-        """Return the value from the top of the stack without removing it"""
+    def top(self):
+        """Return the value from the top of the stack without removing it.
+        If the stack is empty, raise a custom 'StackException'."""
         if self.is_empty():
             raise StackException("Stack is empty")
         return self._da[self._da.length() - 1]
